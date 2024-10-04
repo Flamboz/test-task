@@ -1,13 +1,17 @@
 import React from "react";
-import ReactDOM from "react-dom";
-import { Dashboard } from "./Dashboard";
+import { createRoot } from "react-dom/client";
 import "../styles/index.less";
 import "../styles/carbon.less";
 import "../styles/example.less";
+import Dashboard from "./Dashboard";
 
-const APP_ELEMENT = document.getElementById("app")!;
-const render = (Component: React.ComponentClass<any>) => {
-  ReactDOM.render(<Component />, APP_ELEMENT);
-};
+const APP_ELEMENT = document.getElementById("app");
 
-render(Dashboard);
+if (APP_ELEMENT) {
+  const root = createRoot(APP_ELEMENT);
+  root.render(
+    <React.StrictMode>
+      <Dashboard />
+    </React.StrictMode>
+  );
+}

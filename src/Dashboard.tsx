@@ -1,8 +1,10 @@
+import "@blueprintjs/core/lib/css/blueprint.css";
+import "@blueprintjs/icons/lib/css/blueprint-icons.css";
 import { Classes, HTMLSelect } from "@blueprintjs/core";
 import { IconNames } from "@blueprintjs/icons";
 import classNames from "classnames";
 import dropRight from "lodash/dropRight";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   Corner,
@@ -18,14 +20,9 @@ import {
   MosaicZeroState,
   updateTree,
 } from "./app";
-
-import "@blueprintjs/core/lib/css/blueprint.css";
-import "@blueprintjs/icons/lib/css/blueprint-icons.css";
 import CompanyWidget from "./CompanyWidget";
+import companiesData from "./fake_api_json/companies-lookup.json";
 
-// tslint:disable no-console
-
-// tslint:disable-next-line no-var-requires
 const { version } = require("../package.json");
 
 export const THEMES = {
@@ -36,82 +33,86 @@ export const THEMES = {
 
 export type Theme = keyof typeof THEMES;
 
-export interface DashboardState {
-  currentNode: MosaicNode<number> | null;
-  currentTheme: Theme;
-}
+export type CompanyType = {
+  id: string;
+  ticker: string;
+  name: string;
+  lei: string | null;
+  legal_name: string;
+  stock_exchange: string;
+  sic: number;
+  short_description: string;
+  long_description: string;
+  ceo: string;
+  company_url: string;
+  business_address: string;
+  mailing_address: string;
+  business_phone_no: string;
+  hq_address1: string;
+  hq_address2: string | null;
+  hq_address_city: string;
+  hq_address_postal_code: string;
+  entity_legal_form: string | null;
+  cik: string;
+  latest_filing_date: string | null;
+  hq_state: string | null;
+  hq_country: string;
+  inc_state: string | null;
+  inc_country: string;
+  employees: number;
+  entity_status: string | null;
+  sector: string;
+  industry_category: string;
+  industry_group: string;
+  template: string;
+  standardized_active: boolean;
+  first_fundamental_date: string;
+  last_fundamental_date: string;
+  first_stock_price_date: string;
+  last_stock_price_date: string;
+  thea_enabled: boolean | null;
+  legacy_sector: string;
+  legacy_industry_category: string;
+  legacy_industry_group: string;
+};
 
-export class Dashboard extends React.PureComponent<{}, DashboardState> {
-  state: DashboardState = {
-    currentNode: {
-      direction: "row",
-      first: 1,
-      second: {
-        direction: "column",
-        first: 2,
-        second: 3,
-      },
-      splitPercentage: 40,
+const Dashboard = () => {
+  const [currentNode, setCurrentNode] = useState<MosaicNode<number> | null>({
+    direction: "row",
+    first: 1,
+    second: {
+      direction: "column",
+      first: 2,
+      second: 3,
     },
-    currentTheme: "Blueprint",
+    splitPercentage: 40,
+  });
+
+  const [currentTheme, setCurrentTheme] = useState<Theme>("Blueprint");
+
+  const onChange = (newNode: MosaicNode<number> | null) => {
+    setCurrentNode(newNode);
   };
 
-  render() {
-    const totalWindowCount = getLeaves(this.state.currentNode).length;
-    return (
-      <React.StrictMode>
-        <div className="react-mosaic-example-app">
-          {this.renderNavBar()}
-          <Mosaic<number>
-            renderTile={(_count, path) => (
-              <CompanyWidget
-                path={path}
-                totalWindowCount={totalWindowCount}
-              />
-            )}
-            zeroStateView={
-              <MosaicZeroState createNode={() => totalWindowCount + 1} />
-            }
-            value={this.state.currentNode}
-            onChange={this.onChange}
-            onRelease={this.onRelease}
-            className={THEMES[this.state.currentTheme]}
-            blueprintNamespace="bp4"
-          />
-        </div>
-      </React.StrictMode>
-    );
-  }
-
-  private onChange = (currentNode: MosaicNode<number> | null) => {
-    this.setState({ currentNode });
-  };
-
-  private onRelease = (currentNode: MosaicNode<number> | null) => {
+  const onRelease = (currentNode: MosaicNode<number> | null) => {
     console.log("Mosaic.onRelease():", currentNode);
   };
 
-  private autoArrange = () => {
-    const leaves = getLeaves(this.state.currentNode);
-
-    this.setState({
-      currentNode: createBalancedTreeFromLeaves(leaves),
-    });
+  const autoArrange = () => {
+    const leaves = getLeaves(currentNode);
+    setCurrentNode(createBalancedTreeFromLeaves(leaves));
   };
 
-  private addToTopRight = () => {
-    let { currentNode } = this.state;
-    const totalWindowCount = getLeaves(currentNode).length;
-    if (currentNode) {
-      const path = getPathToCorner(currentNode, Corner.TOP_RIGHT);
+  const addToTopRight = () => {
+    let node = currentNode;
+    const totalWindowCount = getLeaves(node).length;
+    if (node) {
+      const path = getPathToCorner(node, Corner.TOP_RIGHT);
       const parent = getNodeAtPath(
-        currentNode,
+        node,
         dropRight(path)
       ) as MosaicParent<number>;
-      const destination = getNodeAtPath(
-        currentNode,
-        path
-      ) as MosaicNode<number>;
+      const destination = getNodeAtPath(node, path) as MosaicNode<number>;
       const direction: MosaicDirection = parent
         ? getOtherDirection(parent.direction)
         : "row";
@@ -126,7 +127,7 @@ export class Dashboard extends React.PureComponent<{}, DashboardState> {
         second = destination;
       }
 
-      currentNode = updateTree(currentNode, [
+      node = updateTree(node, [
         {
           path,
           spec: {
@@ -139,13 +140,13 @@ export class Dashboard extends React.PureComponent<{}, DashboardState> {
         },
       ]);
     } else {
-      currentNode = totalWindowCount + 1;
+      node = totalWindowCount + 1;
     }
 
-    this.setState({ currentNode });
+    setCurrentNode(node);
   };
 
-  private renderNavBar() {
+  const renderNavBar = () => {
     return (
       <div className={classNames(Classes.NAVBAR, Classes.DARK)}>
         <div className={Classes.NAVBAR_GROUP}>
@@ -165,10 +166,8 @@ export class Dashboard extends React.PureComponent<{}, DashboardState> {
           >
             Theme:
             <HTMLSelect
-              value={this.state.currentTheme}
-              onChange={(e) =>
-                this.setState({ currentTheme: e.currentTarget.value as Theme })
-              }
+              value={currentTheme}
+              onChange={(e) => setCurrentTheme(e.currentTarget.value as Theme)}
             >
               {React.Children.toArray(
                 Object.keys(THEMES).map((label) => <option>{label}</option>)
@@ -182,7 +181,7 @@ export class Dashboard extends React.PureComponent<{}, DashboardState> {
               Classes.BUTTON,
               Classes.iconClass(IconNames.GRID_VIEW)
             )}
-            onClick={this.autoArrange}
+            onClick={autoArrange}
           >
             Auto Arrange
           </button>
@@ -191,12 +190,54 @@ export class Dashboard extends React.PureComponent<{}, DashboardState> {
               Classes.BUTTON,
               Classes.iconClass(IconNames.ARROW_TOP_RIGHT)
             )}
-            onClick={this.addToTopRight}
+            onClick={addToTopRight}
           >
             Add Window to Top Right
           </button>
         </div>
       </div>
     );
-  }
-}
+  };
+
+  const totalWindowCount = getLeaves(currentNode).length;
+
+  const [companies, setCompanies] = useState<CompanyType[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setCompanies(companiesData);
+      setIsLoading(false);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <React.StrictMode>
+      <div className="react-mosaic-example-app">
+        {renderNavBar()}
+        <Mosaic<number>
+          renderTile={(count, path) => (
+            <CompanyWidget
+              companyInfo={companies[count-1]}
+              isLoading={isLoading}
+              path={path}
+              totalWindowCount={totalWindowCount}
+            />
+          )}
+          zeroStateView={
+            <MosaicZeroState createNode={() => totalWindowCount + 1} />
+          }
+          value={currentNode}
+          onChange={onChange}
+          onRelease={onRelease}
+          className={THEMES[currentTheme]}
+          blueprintNamespace="bp4"
+        />
+      </div>
+    </React.StrictMode>
+  );
+};
+
+export default Dashboard;
