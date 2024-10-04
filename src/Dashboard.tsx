@@ -1,8 +1,8 @@
-import { Classes, HTMLSelect } from '@blueprintjs/core';
-import { IconNames } from '@blueprintjs/icons';
-import classNames from 'classnames';
-import dropRight from 'lodash/dropRight';
-import React from 'react';
+import { Classes, HTMLSelect } from "@blueprintjs/core";
+import { IconNames } from "@blueprintjs/icons";
+import classNames from "classnames";
+import dropRight from "lodash/dropRight";
+import React from "react";
 
 import {
   Corner,
@@ -12,88 +12,59 @@ import {
   getOtherDirection,
   getPathToCorner,
   Mosaic,
-  MosaicBranch,
   MosaicDirection,
   MosaicNode,
   MosaicParent,
-  MosaicWindow,
-  MosaicWindowContext,
   MosaicZeroState,
   updateTree,
-} from './app';
+} from "./app";
 
-class CloseAdditionalControlsButton extends React.PureComponent {
-  static contextType = MosaicWindowContext;
-  context!: MosaicWindowContext;
-
-  render() {
-    return (
-      <div className={classNames(Classes.BUTTON_GROUP, Classes.MINIMAL)}>
-        <button
-          onClick={() =>
-            this.context.mosaicWindowActions.setAdditionalControlsOpen(false)
-          }
-          className={Classes.BUTTON}
-        >
-          Proof of Concept Button!
-        </button>
-      </div>
-    );
-  }
-}
-
-import '@blueprintjs/core/lib/css/blueprint.css';
-import '@blueprintjs/icons/lib/css/blueprint-icons.css';
+import "@blueprintjs/core/lib/css/blueprint.css";
+import "@blueprintjs/icons/lib/css/blueprint-icons.css";
+import CompanyWidget from "./CompanyWidget";
 
 // tslint:disable no-console
 
 // tslint:disable-next-line no-var-requires
-const { version } = require('../package.json');
+const { version } = require("../package.json");
 
 export const THEMES = {
-  ['Blueprint']: 'mosaic-blueprint-theme',
-  ['Blueprint Dark']: classNames('mosaic-blueprint-theme', Classes.DARK),
-  ['None']: '',
+  ["Blueprint"]: "mosaic-blueprint-theme",
+  ["Blueprint Dark"]: classNames("mosaic-blueprint-theme", Classes.DARK),
+  ["None"]: "",
 };
 
 export type Theme = keyof typeof THEMES;
 
-const additionalControls = React.Children.toArray([
-  <CloseAdditionalControlsButton />,
-]);
-
-const EMPTY_ARRAY: any[] = [];
-
-export interface ExampleAppState {
+export interface DashboardState {
   currentNode: MosaicNode<number> | null;
   currentTheme: Theme;
 }
 
-export class ExampleApp extends React.PureComponent<{}, ExampleAppState> {
-  state: ExampleAppState = {
+export class Dashboard extends React.PureComponent<{}, DashboardState> {
+  state: DashboardState = {
     currentNode: {
-      direction: 'row',
+      direction: "row",
       first: 1,
       second: {
-        direction: 'column',
+        direction: "column",
         first: 2,
         second: 3,
       },
       splitPercentage: 40,
     },
-    currentTheme: 'Blueprint',
+    currentTheme: "Blueprint",
   };
 
   render() {
     const totalWindowCount = getLeaves(this.state.currentNode).length;
     return (
       <React.StrictMode>
-        <div className='react-mosaic-example-app'>
+        <div className="react-mosaic-example-app">
           {this.renderNavBar()}
           <Mosaic<number>
-            renderTile={(count, path) => (
-              <ExampleWindow
-                count={count}
+            renderTile={(_count, path) => (
+              <CompanyWidget
                 path={path}
                 totalWindowCount={totalWindowCount}
               />
@@ -105,7 +76,7 @@ export class ExampleApp extends React.PureComponent<{}, ExampleAppState> {
             onChange={this.onChange}
             onRelease={this.onRelease}
             className={THEMES[this.state.currentTheme]}
-            blueprintNamespace='bp4'
+            blueprintNamespace="bp4"
           />
         </div>
       </React.StrictMode>
@@ -117,7 +88,7 @@ export class ExampleApp extends React.PureComponent<{}, ExampleAppState> {
   };
 
   private onRelease = (currentNode: MosaicNode<number> | null) => {
-    console.log('Mosaic.onRelease():', currentNode);
+    console.log("Mosaic.onRelease():", currentNode);
   };
 
   private autoArrange = () => {
@@ -143,11 +114,11 @@ export class ExampleApp extends React.PureComponent<{}, ExampleAppState> {
       ) as MosaicNode<number>;
       const direction: MosaicDirection = parent
         ? getOtherDirection(parent.direction)
-        : 'row';
+        : "row";
 
       let first: MosaicNode<number>;
       let second: MosaicNode<number>;
-      if (direction === 'row') {
+      if (direction === "row") {
         first = destination;
         second = totalWindowCount + 1;
       } else {
@@ -179,15 +150,15 @@ export class ExampleApp extends React.PureComponent<{}, ExampleAppState> {
       <div className={classNames(Classes.NAVBAR, Classes.DARK)}>
         <div className={Classes.NAVBAR_GROUP}>
           <div className={Classes.NAVBAR_HEADING}>
-            <a href='https://github.com/nomcopter/react-mosaic'>
-              react-mosaic <span className='version'>v{version}</span>
+            <a href="https://github.com/nomcopter/react-mosaic">
+              react-mosaic <span className="version">v{version}</span>
             </a>
           </div>
         </div>
         <div className={classNames(Classes.NAVBAR_GROUP, Classes.BUTTON_GROUP)}>
           <label
             className={classNames(
-              'theme-selection',
+              "theme-selection",
               Classes.LABEL,
               Classes.INLINE
             )}
@@ -204,8 +175,8 @@ export class ExampleApp extends React.PureComponent<{}, ExampleAppState> {
               )}
             </HTMLSelect>
           </label>
-          <div className='navbar-separator' />
-          <span className='actions-label'>Example Actions:</span>
+          <div className="navbar-separator" />
+          <span className="actions-label">Example Actions:</span>
           <button
             className={classNames(
               Classes.BUTTON,
@@ -229,53 +200,3 @@ export class ExampleApp extends React.PureComponent<{}, ExampleAppState> {
     );
   }
 }
-
-interface ExampleWindowProps {
-  count: number;
-  path: MosaicBranch[];
-  totalWindowCount: number;
-}
-
-const ExampleWindow = ({
-  count,
-  path,
-  totalWindowCount,
-}: ExampleWindowProps) => {
-  const adContainer = React.useRef<HTMLDivElement>(null);
-  React.useEffect(() => {
-    if (adContainer.current == null) {
-      return;
-    }
-
-    const script = document.createElement('script');
-
-    script.src =
-      '//cdn.carbonads.com/carbon.js?serve=CEAIEK3E&placement=nomcoptergithubio';
-    script.async = true;
-    script.type = 'text/javascript';
-    script.id = '_carbonads_js';
-
-    adContainer.current.appendChild(script);
-  }, []);
-
-  return (
-    <MosaicWindow<number>
-      additionalControls={count === 3 ? additionalControls : EMPTY_ARRAY}
-      title={`Window ${count}`}
-      createNode={() => totalWindowCount + 1}
-      path={path}
-      onDragStart={() => console.log('MosaicWindow.onDragStart')}
-      onDragEnd={(type) => console.log('MosaicWindow.onDragEnd', type)}
-      renderToolbar={
-        count === 2
-          ? () => <div className='toolbar-example'>Custom Toolbar</div>
-          : null
-      }
-    >
-      <div className='example-window'>
-        <h1>{`Window ${count}`}</h1>
-        {count === 3 && <div className='ad-container' ref={adContainer} />}
-      </div>
-    </MosaicWindow>
-  );
-};
