@@ -1,10 +1,17 @@
-import flatten from 'lodash/flatten';
-import React from 'react';
-import { MosaicContext } from './contextTypes';
-import { Split } from './Split';
-import { MosaicBranch, MosaicDirection, MosaicKey, MosaicNode, ResizeOptions, TileRenderer } from './types';
-import { BoundingBox } from './util/BoundingBox';
-import { isParent } from './util/mosaicUtilities';
+import flatten from "lodash/flatten";
+import React from "react";
+import { MosaicContext } from "./contextTypes";
+import { Split } from "./Split";
+import {
+  MosaicBranch,
+  MosaicDirection,
+  MosaicKey,
+  MosaicNode,
+  ResizeOptions,
+  TileRenderer,
+} from "./types";
+import { BoundingBox } from "./util/BoundingBox";
+import { isParent } from "./util/mosaicUtilities";
 
 export interface MosaicRootProps<T extends MosaicKey> {
   root: MosaicNode<T>;
@@ -12,33 +19,69 @@ export interface MosaicRootProps<T extends MosaicKey> {
   resize?: ResizeOptions;
 }
 
-export class MosaicRoot<T extends MosaicKey> extends React.PureComponent<MosaicRootProps<T>> {
+export class MosaicRoot<T extends MosaicKey> extends React.PureComponent<
+  MosaicRootProps<T>
+> {
   static contextType = MosaicContext;
   context!: MosaicContext<T>;
 
+  state = {
+    isMobile: false,
+  };
+
+  private mediaQueryList = window.matchMedia("(max-width: 768px)");
+
+  componentDidMount() {
+    this.updateMediaQuery();
+    this.mediaQueryList.addEventListener("change", this.updateMediaQuery);
+  }
+
+  componentWillUnmount() {
+    this.mediaQueryList.removeEventListener("change", this.updateMediaQuery);
+  }
+
+  private updateMediaQuery = () => {
+    this.setState({ isMobile: this.mediaQueryList.matches });
+  };
+
   render() {
     const { root } = this.props;
-    return <div className="mosaic-root">{this.renderRecursively(root, BoundingBox.empty(), [])}</div>;
+    return (
+      <div className="mosaic-root">
+        {this.renderRecursively(root, BoundingBox.empty(), [])}
+      </div>
+    );
   }
 
   private renderRecursively(
     node: MosaicNode<T>,
     boundingBox: BoundingBox,
-    path: MosaicBranch[],
+    path: MosaicBranch[]
   ): JSX.Element | JSX.Element[] {
     if (isParent(node)) {
-      const splitPercentage = node.splitPercentage == null ? 50 : node.splitPercentage;
-      const { first, second } = BoundingBox.split(boundingBox, splitPercentage, node.direction);
+      const splitPercentage =
+        node.splitPercentage == null ? 50 : node.splitPercentage;
+      const { first, second } = BoundingBox.split(
+        boundingBox,
+        splitPercentage,
+        node.direction
+      );
       return flatten(
         [
-          this.renderRecursively(node.first, first, path.concat('first')),
+          this.renderRecursively(node.first, first, path.concat("first")),
           this.renderSplit(node.direction, boundingBox, splitPercentage, path),
-          this.renderRecursively(node.second, second, path.concat('second')),
-        ].filter(nonNullElement),
+          this.renderRecursively(node.second, second, path.concat("second")),
+        ].filter(nonNullElement)
       );
     } else {
       return (
-        <div key={node} className="mosaic-tile" style={{ ...BoundingBox.asStyles(boundingBox) }}>
+        <div
+          key={node}
+          className="mosaic-tile"
+          style={
+            this.state.isMobile ? {} : { ...BoundingBox.asStyles(boundingBox) }
+          }
+        >
           {this.props.renderTile(node, path)}
         </div>
       );
@@ -49,13 +92,13 @@ export class MosaicRoot<T extends MosaicKey> extends React.PureComponent<MosaicR
     direction: MosaicDirection,
     boundingBox: BoundingBox,
     splitPercentage: number,
-    path: MosaicBranch[],
+    path: MosaicBranch[]
   ) {
     const { resize } = this.props;
-    if (resize !== 'DISABLED') {
+    if (resize !== "DISABLED") {
       return (
         <Split
-          key={path.join(',') + 'splitter'}
+          key={path.join(",") + "splitter"}
           {...resize}
           boundingBox={boundingBox}
           splitPercentage={splitPercentage}
@@ -69,7 +112,11 @@ export class MosaicRoot<T extends MosaicKey> extends React.PureComponent<MosaicR
     }
   }
 
-  private onResize = (percentage: number, path: MosaicBranch[], suppressOnRelease: boolean) => {
+  private onResize = (
+    percentage: number,
+    path: MosaicBranch[],
+    suppressOnRelease: boolean
+  ) => {
     this.context.mosaicActions.updateTree(
       [
         {
@@ -81,11 +128,13 @@ export class MosaicRoot<T extends MosaicKey> extends React.PureComponent<MosaicR
           },
         },
       ],
-      suppressOnRelease,
+      suppressOnRelease
     );
   };
 }
 
-function nonNullElement(x: JSX.Element | JSX.Element[] | null): x is JSX.Element | JSX.Element[] {
+function nonNullElement(
+  x: JSX.Element | JSX.Element[] | null
+): x is JSX.Element | JSX.Element[] {
   return x !== null;
 }
