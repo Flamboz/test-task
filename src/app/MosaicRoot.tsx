@@ -112,18 +112,34 @@ export class MosaicRoot<T extends MosaicKey> extends React.PureComponent<
     }
   }
 
+  private getMinInset(): number {
+    const screenWidth = window.innerWidth;
+    if (screenWidth >= 2000) {
+      return 10;
+    } else if (screenWidth >= 1400) {
+      return 30;
+    } else if (screenWidth >= 1024) {
+      return 40;
+    }
+
+    return 40;
+  }
+
   private onResize = (
     percentage: number,
     path: MosaicBranch[],
     suppressOnRelease: boolean
   ) => {
+    const clampedPercentage = Math.max(percentage, this.getMinInset());
+    console.log(this.getMinInset());
+
     this.context.mosaicActions.updateTree(
       [
         {
           path,
           spec: {
             splitPercentage: {
-              $set: percentage,
+              $set: clampedPercentage,
             },
           },
         },
