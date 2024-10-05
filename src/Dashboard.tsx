@@ -22,6 +22,7 @@ import {
 } from "./app";
 import CompanyWidget from "./CompanyWidget";
 import companiesData from "./fake_api_json/companies-lookup.json";
+import stocksData from "./fake_api_json/securities.json";
 
 const { version } = require("../package.json");
 
@@ -74,6 +75,38 @@ export type CompanyType = {
   legacy_sector: string;
   legacy_industry_category: string;
   legacy_industry_group: string;
+};
+
+export type StockType = {
+  id: string;
+  company_id: string;
+  stock_exchange_id: string;
+  name: string;
+  type: string;
+  code: string;
+  share_class: string;
+  currency: string;
+  round_lot_size: number;
+  ticker: string;
+  exchange_ticker: string;
+  composite_ticker: string;
+  alternate_tickers: string[];
+  figi: string;
+  cik: string;
+  composite_figi: string;
+  share_class_figi: string;
+  figi_uniqueid: string;
+  primary_security: boolean;
+  primary_listing: boolean;
+  active: boolean;
+  etf: boolean;
+  delisted: boolean;
+  first_stock_price: string;
+  last_stock_price: string;
+  last_stock_price_adjustment: string;
+  last_corporate_action: string;
+  previous_tickers: string[];
+  listing_exchange_mic: string;
 };
 
 const Dashboard = () => {
@@ -202,30 +235,57 @@ const Dashboard = () => {
   const totalWindowCount = getLeaves(currentNode).length;
 
   const [companies, setCompanies] = useState<CompanyType[]>([]);
+  const [stocks, setStocks] = useState<StockType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setCompanies(companiesData);
+      setStocks(stocksData);
       setIsLoading(false);
     }, 500);
 
     return () => clearTimeout(timer);
   }, []);
 
+  const getCompanyInfoById = (id: string) => {
+    const companyInfo = companies.find((company) => company.id === id);
+    const stockInfo = stocks.find((stock) => stock.company_id === id);
+
+    return { companyInfo: companyInfo, stockInfo: stockInfo };
+  };
+
+  const companyTickers = companies.map((company) => ({
+    id: company.id,
+    name: company.ticker,
+  }));
+
+  const getDefaultTickerForTile = (index: number) => {
+    const companyInfo = companies[index] ?? companies[0];
+    const stockInfo = stocks.find(
+      (stock) => stock.company_id === companyInfo.id
+    );
+
+    return { companyInfo: companyInfo, stockInfo: stockInfo };
+  };
+
   return (
     <React.StrictMode>
       <div className="react-mosaic-example-app">
         {renderNavBar()}
         <Mosaic<number>
-          renderTile={(count, path) => (
-            <CompanyWidget
-              companyInfo={companies[count-1]}
-              isLoading={isLoading}
-              path={path}
-              totalWindowCount={totalWindowCount}
-            />
-          )}
+          renderTile={(count, path) => {
+            return (
+              <CompanyWidget
+                companyTickers={companyTickers}
+                getCompanyInfoById={getCompanyInfoById}
+                defaultTicker={getDefaultTickerForTile(count - 1)}
+                isLoading={isLoading}
+                path={path}
+                totalWindowCount={totalWindowCount}
+              />
+            );
+          }}
           zeroStateView={
             <MosaicZeroState createNode={() => totalWindowCount + 1} />
           }
