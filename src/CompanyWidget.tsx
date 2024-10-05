@@ -21,6 +21,7 @@ interface CompanyWidgetProps {
     companyInfo: CompanyType | undefined;
     stockInfo: StockType | undefined;
   };
+  isError: boolean;
   isLoading: boolean;
 }
 
@@ -30,6 +31,7 @@ const CompanyWidget = ({
   companyTickers,
   getCompanyInfoById,
   defaultTicker,
+  isError,
   isLoading,
 }: CompanyWidgetProps) => {
   const adContainer = useRef<HTMLDivElement>(null);
@@ -88,6 +90,7 @@ const CompanyWidget = ({
       onDragEnd={(type) => console.log("MosaicWindow.onDragEnd", type)}
     >
       <div className="example-window">
+        {isError && <div className="text-red-500">Error loading data. Please try again.</div>}
         {!companyFullInfo && !isLoading && (
           <div>Choose company from select</div>
         )}

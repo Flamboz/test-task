@@ -237,12 +237,18 @@ const Dashboard = () => {
   const [companies, setCompanies] = useState<CompanyType[]>([]);
   const [stocks, setStocks] = useState<StockType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setCompanies(companiesData);
-      setStocks(stocksData);
-      setIsLoading(false);
+      try {
+        setCompanies(companiesData);
+        setStocks(stocksData);
+      } catch (error) {
+        setIsError(true);
+      } finally {
+        setIsLoading(false);
+      }
     }, 500);
 
     return () => clearTimeout(timer);
@@ -281,6 +287,7 @@ const Dashboard = () => {
                 getCompanyInfoById={getCompanyInfoById}
                 defaultTicker={getDefaultTickerForTile(count - 1)}
                 isLoading={isLoading}
+                isError={isError}
                 path={path}
                 totalWindowCount={totalWindowCount}
               />
