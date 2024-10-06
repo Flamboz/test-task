@@ -1,11 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import {
   DEFAULT_CONTROLS_WITH_CREATION,
   MosaicBranch,
   MosaicWindow,
 } from "./app";
-import { CompanyType, StockType } from "./Dashboard";
-
+import { CompanyType, StockType } from "./types";
 interface CompanyWidgetProps {
   path: MosaicBranch[];
   totalWindowCount: number;
@@ -34,23 +33,6 @@ const CompanyWidget = ({
   isError,
   isLoading,
 }: CompanyWidgetProps) => {
-  const adContainer = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (adContainer.current == null) {
-      return;
-    }
-
-    const script = document.createElement("script");
-
-    script.src =
-      "//cdn.carbonads.com/carbon.js?serve=CEAIEK3E&placement=nomcoptergithubio";
-    script.async = true;
-    script.type = "text/javascript";
-    script.id = "_carbonads_js";
-
-    adContainer.current.appendChild(script);
-  }, []);
-
   const [selectedTicker, setSelectedTicker] = useState<string | undefined>(
     undefined
   );
@@ -89,8 +71,12 @@ const CompanyWidget = ({
       onDragStart={() => console.log("MosaicWindow.onDragStart")}
       onDragEnd={(type) => console.log("MosaicWindow.onDragEnd", type)}
     >
-      <div className="example-window">
-        {isError && <div className="text-red-500">Error loading data. Please try again.</div>}
+      <div className="example-window overflow-x-auto h-full p-5 flex items-center flex-col">
+        {isError && (
+          <div className="text-red-500">
+            Error loading data. Please try again.
+          </div>
+        )}
         {!companyFullInfo && !isLoading && (
           <div>Choose company from select</div>
         )}

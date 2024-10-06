@@ -1,7 +1,6 @@
 import "@blueprintjs/core/lib/css/blueprint.css";
 import "@blueprintjs/icons/lib/css/blueprint-icons.css";
 import { Classes, HTMLSelect } from "@blueprintjs/core";
-import { IconNames } from "@blueprintjs/icons";
 import classNames from "classnames";
 import dropRight from "lodash/dropRight";
 import React, { useEffect, useState } from "react";
@@ -23,8 +22,7 @@ import {
 import CompanyWidget from "./CompanyWidget";
 import companiesData from "./fake_api_json/companies-lookup.json";
 import stocksData from "./fake_api_json/securities.json";
-
-const { version } = require("../package.json");
+import { CompanyType, StockType } from "./types";
 
 export const THEMES = {
   ["Blueprint"]: "mosaic-blueprint-theme",
@@ -33,81 +31,6 @@ export const THEMES = {
 };
 
 export type Theme = keyof typeof THEMES;
-
-export type CompanyType = {
-  id: string;
-  ticker: string;
-  name: string;
-  lei: string | null;
-  legal_name: string;
-  stock_exchange: string;
-  sic: number;
-  short_description: string;
-  long_description: string;
-  ceo: string;
-  company_url: string;
-  business_address: string;
-  mailing_address: string;
-  business_phone_no: string;
-  hq_address1: string;
-  hq_address2: string | null;
-  hq_address_city: string;
-  hq_address_postal_code: string;
-  entity_legal_form: string | null;
-  cik: string;
-  latest_filing_date: string | null;
-  hq_state: string | null;
-  hq_country: string;
-  inc_state: string | null;
-  inc_country: string;
-  employees: number;
-  entity_status: string | null;
-  sector: string;
-  industry_category: string;
-  industry_group: string;
-  template: string;
-  standardized_active: boolean;
-  first_fundamental_date: string;
-  last_fundamental_date: string;
-  first_stock_price_date: string;
-  last_stock_price_date: string;
-  thea_enabled: boolean | null;
-  legacy_sector: string;
-  legacy_industry_category: string;
-  legacy_industry_group: string;
-};
-
-export type StockType = {
-  id: string;
-  company_id: string;
-  stock_exchange_id: string;
-  name: string;
-  type: string;
-  code: string;
-  share_class: string;
-  currency: string;
-  round_lot_size: number;
-  ticker: string;
-  exchange_ticker: string;
-  composite_ticker: string;
-  alternate_tickers: string[];
-  figi: string;
-  cik: string;
-  composite_figi: string;
-  share_class_figi: string;
-  figi_uniqueid: string;
-  primary_security: boolean;
-  primary_listing: boolean;
-  active: boolean;
-  etf: boolean;
-  delisted: boolean;
-  first_stock_price: string;
-  last_stock_price: string;
-  last_stock_price_adjustment: string;
-  last_corporate_action: string;
-  previous_tickers: string[];
-  listing_exchange_mic: string;
-};
 
 const Dashboard = () => {
   const [currentNode, setCurrentNode] = useState<MosaicNode<number> | null>({
@@ -181,23 +104,9 @@ const Dashboard = () => {
 
   const renderNavBar = () => {
     return (
-      <div className={classNames(Classes.NAVBAR, Classes.DARK)}>
-        <div className={Classes.NAVBAR_GROUP}>
-          <div className={Classes.NAVBAR_HEADING}>
-            <a href="https://github.com/nomcopter/react-mosaic">
-              react-mosaic <span className="version">v{version}</span>
-            </a>
-          </div>
-        </div>
-        <div className={classNames(Classes.NAVBAR_GROUP, Classes.BUTTON_GROUP)}>
-          <label
-            className={classNames(
-              "theme-selection",
-              Classes.LABEL,
-              Classes.INLINE
-            )}
-          >
-            Theme:
+      <div className="flex items-center justify-end bg-gray-800 p-4">
+        <div className="flex items-center space-x-4">
+          <label className="flex items-center space-x-2 text-white">
             <HTMLSelect
               value={currentTheme}
               onChange={(e) => setCurrentTheme(e.currentTarget.value as Theme)}
@@ -207,26 +116,21 @@ const Dashboard = () => {
               )}
             </HTMLSelect>
           </label>
-          <div className="navbar-separator" />
-          <span className="actions-label">Example Actions:</span>
-          <button
-            className={classNames(
-              Classes.BUTTON,
-              Classes.iconClass(IconNames.GRID_VIEW)
-            )}
-            onClick={autoArrange}
-          >
-            Auto Arrange
-          </button>
-          <button
-            className={classNames(
-              Classes.BUTTON,
-              Classes.iconClass(IconNames.ARROW_TOP_RIGHT)
-            )}
-            onClick={addToTopRight}
-          >
-            Add Window to Top Right
-          </button>
+          <div className="h-6 border-l border-gray-600 mx-4 hidden sm:block"></div>
+          <div className="flex gap-4">
+            <button
+              className="bg-gray-700 hover:bg-gray-600 text-white px-3 py-2 rounded"
+              onClick={autoArrange}
+            >
+              Auto Arrange
+            </button>
+            <button
+              className="bg-gray-700 hover:bg-gray-600 text-white px-3 py-2 rounded"
+              onClick={addToTopRight}
+            >
+              Add Window to Top Right
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -277,7 +181,7 @@ const Dashboard = () => {
 
   return (
     <React.StrictMode>
-      <div className="react-mosaic-example-app">
+      <div className="h-screen w-full overflow-hidden">
         {renderNavBar()}
         <Mosaic<number>
           renderTile={(count, path) => {
