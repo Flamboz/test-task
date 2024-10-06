@@ -30,6 +30,7 @@
     "bundle": "rm -rf docs/ && webpack --config webpack/bundle.ts",
     "clean": "rm -rf lib/",
     "start": "webpack-dev-server --config webpack/hot.ts",
+    "start:docker": "docker-compose up",
     "prettier:run": "prettier 'styles/*.less' '*.md' '{,.}*.yml' '.circleci/*.yml'",
     "test": "npm-run-all build -lp test:**",
     "test:lint": "tslint -c tslint.yml -p tsconfig.json -e test",
