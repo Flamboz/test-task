@@ -32,7 +32,7 @@ const THEMES = {
 
 export type Theme = keyof typeof THEMES;
 
-const useDashboard = () => {
+const useWindowControls = () => {
   const [currentNode, setCurrentNode] = useState<MosaicNode<number> | null>({
     direction: "row",
     first: 1,
@@ -143,7 +143,7 @@ const useLoadCompanyFullData = () => {
 
 const Navbar = () => {
   const { currentTheme, setCurrentTheme, autoArrange, addToTopRight } =
-    useDashboard();
+    useWindowControls();
 
   return (
     <div className="flex items-center justify-end bg-gray-800 p-4">
@@ -181,13 +181,14 @@ const Navbar = () => {
 const Loader = () => {
   return (
     <div className="flex items-center justify-center min-h-screen">
-      <div className="w-16 h-16 border-4 border-t-transparent border-gray-900 rounded-full animate-spin"></div> 
+      <div className="w-16 h-16 border-4 border-t-transparent border-gray-900 rounded-full animate-spin"></div>
     </div>
   );
 };
 
 const Dashboard = () => {
-  const { currentNode, currentTheme, onChange, onRelease } = useDashboard();
+  const { currentNode, currentTheme, onChange, onRelease } =
+    useWindowControls();
 
   const { companies, stocks, isLoading, isError } = useLoadCompanyFullData();
 
