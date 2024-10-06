@@ -24,15 +24,15 @@ import companiesData from "./fake_api_json/companies-lookup.json";
 import stocksData from "./fake_api_json/securities.json";
 import { CompanyType, StockType } from "./types";
 
-export const THEMES = {
-  ["Blueprint"]: "mosaic-blueprint-theme",
-  ["Blueprint Dark"]: classNames("mosaic-blueprint-theme", Classes.DARK),
-  ["None"]: "",
+const THEMES = {
+  Blueprint: "mosaic-blueprint-theme",
+  "Blueprint Dark": classNames("mosaic-blueprint-theme", Classes.DARK),
+  None: "",
 };
 
 export type Theme = keyof typeof THEMES;
 
-const Dashboard = () => {
+const useDashboard = () => {
   const [currentNode, setCurrentNode] = useState<MosaicNode<number> | null>({
     direction: "row",
     first: 1,
@@ -43,8 +43,27 @@ const Dashboard = () => {
     },
     splitPercentage: 40,
   });
-
   const [currentTheme, setCurrentTheme] = useState<Theme>("Blueprint");
+
+  const [companies, setCompanies] = useState<CompanyType[]>([]);
+  const [stocks, setStocks] = useState<StockType[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      try {
+        setCompanies(companiesData);
+        setStocks(stocksData);
+      } catch (error) {
+        setIsError(true);
+      } finally {
+        setIsLoading(false);
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const onChange = (newNode: MosaicNode<number> | null) => {
     setCurrentNode(newNode);
@@ -136,33 +155,38 @@ const Dashboard = () => {
     );
   };
 
-  const totalWindowCount = getLeaves(currentNode).length;
+  return {
+    currentNode,
+    currentTheme,
+    companies,
+    stocks,
+    isLoading,
+    isError,
+    onChange,
+    onRelease,
+    renderNavBar,
+  };
+};
 
-  const [companies, setCompanies] = useState<CompanyType[]>([]);
-  const [stocks, setStocks] = useState<StockType[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isError, setIsError] = useState(false);
+const Dashboard = () => {
+  const {
+    currentNode,
+    currentTheme,
+    companies,
+    stocks,
+    isLoading,
+    isError,
+    onChange,
+    onRelease,
+    renderNavBar,
+  } = useDashboard();
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      try {
-        setCompanies(companiesData);
-        setStocks(stocksData);
-      } catch (error) {
-        setIsError(true);
-      } finally {
-        setIsLoading(false);
-      }
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, []);
+  const totalWindowCount = companies.length;
 
   const getCompanyInfoById = (id: string) => {
     const companyInfo = companies.find((company) => company.id === id);
     const stockInfo = stocks.find((stock) => stock.company_id === id);
-
-    return { companyInfo: companyInfo, stockInfo: stockInfo };
+    return { companyInfo, stockInfo };
   };
 
   const companyTickers = companies.map((company) => ({
@@ -175,8 +199,7 @@ const Dashboard = () => {
     const stockInfo = stocks.find(
       (stock) => stock.company_id === companyInfo.id
     );
-
-    return { companyInfo: companyInfo, stockInfo: stockInfo };
+    return { companyInfo, stockInfo };
   };
 
   return (
