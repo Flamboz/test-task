@@ -131,7 +131,6 @@ export class MosaicRoot<T extends MosaicKey> extends React.PureComponent<
     suppressOnRelease: boolean
   ) => {
     const clampedPercentage = Math.max(percentage, this.getMinInset());
-    console.log(this.getMinInset());
 
     this.context.mosaicActions.updateTree(
       [

@@ -68,8 +68,6 @@ const CompanyWidget = ({
       className="text-base"
       createNode={() => totalWindowCount + 1}
       path={path}
-      onDragStart={() => console.log("MosaicWindow.onDragStart")}
-      onDragEnd={(type) => console.log("MosaicWindow.onDragEnd", type)}
     >
       <div className="example-window overflow-x-auto h-full p-5 flex items-center flex-col">
         {isError && (
