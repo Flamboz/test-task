@@ -14,7 +14,7 @@
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "target": "es5",
+    "target": "es6",
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
