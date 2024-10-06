@@ -20,5 +20,5 @@
     "strict": true,
     "resolveJsonModule": true,
   },
-  "exclude": ["docs", "lib", "node_modules"],
+  "exclude": ["docs", "build", "node_modules"],
 }

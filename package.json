@@ -3,10 +3,10 @@
   "version": "6.1.0",
   "description": "A React Tiling Window Manager",
   "license": "Apache-2.0",
-  "main": "lib/index.js",
-  "style": "lib/react-mosaic.css",
+  "main": "build/index.js",
+  "style": "build/react-mosaic.css",
   "type": "commonjs",
-  "typings": "lib/index.d.ts",
+  "typings": "build/index.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nomcopter/react-mosaic.git"
@@ -26,9 +26,9 @@
   "scripts": {
     "build": "npm-run-all clean -lp build:**",
     "build:ts": "tsc -p tsconfig-build.json",
-    "build:less": "lessc --autoprefix=defaults styles/index.less lib/react-mosaic-component.css",
+    "build:less": "lessc --autoprefix=defaults styles/index.less build/react-mosaic-component.css",
     "bundle": "rm -rf docs/ && webpack --npm ruconfig webpack/bundle.ts",
-    "clean": "rm -rf lib/",
+    "clean": "rm -rf build/",
     "start": "webpack-dev-server --config webpack/hot.ts",
     "start:docker": "docker-compose up",
     "start:server": "concurrently \"npx json-server --watch fake_api_json/companies-lookup.json --port 5001\" \"npx json-server --watch fake_api_json/securities.json --port 5002\"",
