@@ -3,7 +3,7 @@ import {
   DEFAULT_CONTROLS_WITH_CREATION,
   MosaicBranch,
   MosaicWindow,
-} from "./app";
+} from "./lib";
 import { CompanyType, StockType } from "./types";
 interface CompanyWidgetProps {
   path: MosaicBranch[];
