@@ -204,29 +204,35 @@ const Dashboard = () => {
     <React.StrictMode>
       <div className="h-screen w-full overflow-hidden">
         {renderNavBar()}
-        <Mosaic<number>
-          renderTile={(count, path) => {
-            return (
-              <CompanyWidget
-                companyTickers={companyTickers}
-                getCompanyInfoById={getCompanyInfoById}
-                defaultTicker={getDefaultTickerForTile(count - 1)}
-                isLoading={isLoading}
-                isError={isError}
-                path={path}
-                totalWindowCount={totalWindowCount}
-              />
-            );
-          }}
-          zeroStateView={
-            <MosaicZeroState createNode={() => totalWindowCount + 1} />
-          }
-          value={currentNode}
-          onChange={onChange}
-          onRelease={onRelease}
-          className={THEMES[currentTheme]}
-          blueprintNamespace="bp4"
-        />
+        {isError && (
+          <p className="pt-2 text-xl text-red-500 text-center">
+            Error loading data. Please try again.
+          </p>
+        )}
+        {isLoading && <p className="pt-2 text-xl text-center">Loading...</p>}
+        {!isLoading && !isError && (
+          <Mosaic<number>
+            renderTile={(count, path) => {
+              return (
+                <CompanyWidget
+                  companyTickers={companyTickers}
+                  getCompanyInfoById={getCompanyInfoById}
+                  defaultTicker={getDefaultTickerForTile(count - 1)}
+                  path={path}
+                  totalWindowCount={totalWindowCount}
+                />
+              );
+            }}
+            zeroStateView={
+              <MosaicZeroState createNode={() => totalWindowCount + 1} />
+            }
+            value={currentNode}
+            onChange={onChange}
+            onRelease={onRelease}
+            className={THEMES[currentTheme]}
+            blueprintNamespace="bp4"
+          />
+        )}
       </div>
     </React.StrictMode>
   );

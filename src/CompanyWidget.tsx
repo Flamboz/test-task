@@ -20,8 +20,6 @@ interface CompanyWidgetProps {
     companyInfo: CompanyType | undefined;
     stockInfo: StockType | undefined;
   };
-  isError: boolean;
-  isLoading: boolean;
 }
 
 interface CompanyInfoViewProps {
@@ -35,8 +33,6 @@ const CompanyWidget = ({
   companyTickers,
   getCompanyInfoById,
   defaultTicker,
-  isError,
-  isLoading,
 }: CompanyWidgetProps) => {
   const [selectedTicker, setSelectedTicker] = useState<string | undefined>(
     undefined
@@ -173,16 +169,7 @@ const CompanyWidget = ({
       path={path}
     >
       <div className="example-window overflow-x-auto h-full p-5 flex items-center flex-col">
-        {isError && (
-          <div className="text-red-500">
-            Error loading data. Please try again.
-          </div>
-        )}
-        {!companyFullInfo && !isLoading && (
-          <div>Choose company from select</div>
-        )}
-        {isLoading && "Loading..."}
-        {!isLoading && companyFullInfo && companyInfo && stockInfo && (
+        {companyFullInfo && companyInfo && stockInfo && (
           <CompanyInfoView companyInfo={companyInfo} stockInfo={stockInfo} />
         )}
       </div>
