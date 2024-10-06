@@ -45,26 +45,6 @@ const useDashboard = () => {
   });
   const [currentTheme, setCurrentTheme] = useState<Theme>("Blueprint");
 
-  const [companies, setCompanies] = useState<CompanyType[]>([]);
-  const [stocks, setStocks] = useState<StockType[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isError, setIsError] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      try {
-        setCompanies(companiesData);
-        setStocks(stocksData);
-      } catch (error) {
-        setIsError(true);
-      } finally {
-        setIsLoading(false);
-      }
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, []);
-
   const onChange = (newNode: MosaicNode<number> | null) => {
     setCurrentNode(newNode);
   };
@@ -158,28 +138,46 @@ const useDashboard = () => {
   return {
     currentNode,
     currentTheme,
-    companies,
-    stocks,
-    isLoading,
-    isError,
     onChange,
     onRelease,
     renderNavBar,
   };
 };
 
-const Dashboard = () => {
-  const {
-    currentNode,
-    currentTheme,
+const useLoadCompanyFullData = () => {
+  const [companies, setCompanies] = useState<CompanyType[]>([]);
+  const [stocks, setStocks] = useState<StockType[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      try {
+        setCompanies(companiesData);
+        setStocks(stocksData);
+      } catch (error) {
+        setIsError(true);
+      } finally {
+        setIsLoading(false);
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  return {
     companies,
     stocks,
     isLoading,
     isError,
-    onChange,
-    onRelease,
-    renderNavBar,
-  } = useDashboard();
+  };
+};
+
+const Dashboard = () => {
+  const { currentNode, currentTheme, onChange, onRelease, renderNavBar } =
+    useDashboard();
+
+  const { companies, stocks, isLoading, isError } = useLoadCompanyFullData();
 
   const totalWindowCount = companies.length;
 
