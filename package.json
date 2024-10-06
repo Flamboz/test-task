@@ -31,7 +31,7 @@
     "clean": "rm -rf lib/",
     "start": "webpack-dev-server --config webpack/hot.ts",
     "start:docker": "docker-compose up",
-    "start:server": "concurrently \"npx json-server --watch fake_api_json/companies-lookup.json --port 5001/companies\" \"npx json-server --watch fake_api_json/securities.json --port 5002/securities\"",
+    "start:server": "concurrently \"npx json-server --watch fake_api_json/companies-lookup.json --port 5001\" \"npx json-server --watch fake_api_json/securities.json --port 5002\"",
     "prettier:run": "prettier 'styles/*.less' '*.md' '{,.}*.yml' '.circleci/*.yml'",
     "test": "npm-run-all build -lp test:**",
     "test:lint": "tslint -c tslint.yml -p tsconfig.json -e test",
