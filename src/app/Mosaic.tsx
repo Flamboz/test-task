@@ -142,11 +142,12 @@ export class MosaicWithoutDragDropContext<T extends MosaicKey = string> extends 
 
   private getRoot(): MosaicNode<T> | null {
     if (isUncontrolled(this.props)) {
-      return this.state.currentNode;
+        return this.state.currentNode; 
     } else {
-      return this.props.value;
+        const controlledProps = this.props as MosaicControlledProps<T>; 
+        return controlledProps.value; 
     }
-  }
+}
 
   private updateRoot = (updates: MosaicUpdate<T>[], suppressOnRelease: boolean = false) => {
     const currentNode = this.getRoot() || ({} as MosaicNode<T>);
