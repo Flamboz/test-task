@@ -128,7 +128,7 @@ const useLoadCompanyFullData = () => {
       } finally {
         setIsLoading(false);
       }
-    }, 500);
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -178,6 +178,14 @@ const Navbar = () => {
   );
 };
 
+const Loader = () => {
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="w-16 h-16 border-4 border-t-transparent border-gray-900 rounded-full animate-spin"></div> 
+    </div>
+  );
+};
+
 const Dashboard = () => {
   const { currentNode, currentTheme, onChange, onRelease } = useDashboard();
 
@@ -213,7 +221,7 @@ const Dashboard = () => {
             Error loading data. Please try again.
           </p>
         )}
-        {isLoading && <p className="pt-2 text-xl text-center">Loading...</p>}
+        {isLoading && <Loader />}
         {!isLoading && !isError && (
           <Mosaic<number>
             renderTile={(count, path) => {
