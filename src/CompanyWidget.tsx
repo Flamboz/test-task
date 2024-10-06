@@ -117,7 +117,7 @@ const CompanyInfoView = ({ companyInfo, stockInfo }: CompanyInfoViewProps) => {
       </p>
     </div>
   );
-};
+}; // винести в окремий компонент
 
 const CompanyWidget = ({
   path,

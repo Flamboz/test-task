@@ -1,3 +1,7 @@
+import { THEMES } from "./constants";
+
+export type Theme = keyof typeof THEMES;
+
 export type CompanyType = {
   id: string;
   ticker: string;
