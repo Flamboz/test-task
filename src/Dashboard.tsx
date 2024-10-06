@@ -20,8 +20,6 @@ import {
   updateTree,
 } from "./lib";
 import CompanyWidget from "./CompanyWidget";
-import companiesData from "./fake_api_json/companies-lookup.json";
-import stocksData from "./fake_api_json/securities.json";
 import { CompanyType, StockType } from "./types";
 
 const THEMES = {
@@ -119,18 +117,28 @@ const useLoadCompanyFullData = () => {
   const [isError, setIsError] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      setIsError(false);
+
       try {
-        setCompanies(companiesData);
-        setStocks(stocksData);
+        const companyResponse = await fetch("http://localhost:5001/companies");
+        const stockResponse = await fetch("http://localhost:5002/securities");
+
+        const companyData = await companyResponse.json();
+        const stockData = await stockResponse.json();
+
+        setCompanies(companyData);
+        setStocks(stockData);
       } catch (error) {
+        console.error("Error fetching data:", error);
         setIsError(true);
       } finally {
         setIsLoading(false);
       }
-    }, 1000);
+    };
 
-    return () => clearTimeout(timer);
+    fetchData();
   }, []);
 
   return {

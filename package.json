@@ -1,5 +1,5 @@
 {
-  "name": "react-mosaic-component",
+  "name": "companies-lookup-api",
   "version": "6.1.0",
   "description": "A React Tiling Window Manager",
   "license": "Apache-2.0",
@@ -9,7 +9,7 @@
   "typings": "lib/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/nomcopter/react-mosaic.git"
+    "url": "git+https://github.com/nomcopter/react-mosaic.git"
   },
   "funding": "https://github.com/nomcopter/react-mosaic?sponsor=1",
   "keywords": [
@@ -27,10 +27,11 @@
     "build": "npm-run-all clean -lp build:**",
     "build:ts": "tsc -p tsconfig-build.json",
     "build:less": "lessc --autoprefix=defaults styles/index.less lib/react-mosaic-component.css",
-    "bundle": "rm -rf docs/ && webpack --config webpack/bundle.ts",
+    "bundle": "rm -rf docs/ && webpack --npm ruconfig webpack/bundle.ts",
     "clean": "rm -rf lib/",
     "start": "webpack-dev-server --config webpack/hot.ts",
     "start:docker": "docker-compose up",
+    "start:server": "concurrently \"npx json-server --watch fake_api_json/companies-lookup.json --port 5001/companies\" \"npx json-server --watch fake_api_json/securities.json --port 5002/securities\"",
     "prettier:run": "prettier 'styles/*.less' '*.md' '{,.}*.yml' '.circleci/*.yml'",
     "test": "npm-run-all build -lp test:**",
     "test:lint": "tslint -c tslint.yml -p tsconfig.json -e test",
@@ -44,6 +45,7 @@
   "dependencies": {
     "classnames": "^2.3.2",
     "immutability-helper": "^3.1.1",
+    "json-server": "^1.0.0-beta.3",
     "lodash": "^4.17.21",
     "prop-types": "^15.8.1",
     "rdndmb-html5-to-touch": "^8.0.0",
@@ -68,6 +70,7 @@
     "@types/uuid": "^9.0.0",
     "@types/webpack": "^5.28.0",
     "chai": "^4.3.6",
+    "concurrently": "^9.0.1",
     "css-loader": "^6.7.3",
     "dnd-core": "16.0.1",
     "html-loader": "^4.2.0",
@@ -101,5 +104,10 @@
   },
   "peerDependencies": {
     "react": "16 - 18"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/nomcopter/react-mosaic/issues"
+  },
+  "homepage": "https://github.com/nomcopter/react-mosaic#readme",
+  "author": ""
 }
