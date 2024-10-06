@@ -2,12 +2,20 @@ import { HTMLSelect } from "@blueprintjs/core";
 import React from "react";
 import { THEMES } from "./constants";
 import { Theme } from "./types";
-import { useWindowControls } from "./useWindowsControls";
 
-export const Navbar = () => {
-  const { currentTheme, setCurrentTheme, autoArrange, addToTopRight } =
-    useWindowControls();
+interface NavbarProps {
+  currentTheme: Theme;
+  setCurrentTheme: React.Dispatch<React.SetStateAction<Theme>>;
+  autoArrange: () => void;
+  addToTopRight: () => void;
+}
 
+export const Navbar = ({
+  currentTheme,
+  setCurrentTheme,
+  autoArrange,
+  addToTopRight,
+}: NavbarProps) => {
   return (
     <div className="flex items-center justify-end bg-gray-800 p-4">
       <div className="flex items-center space-x-4">

@@ -10,8 +10,15 @@ import { useLoadCompanyFullData } from "./useLoadCompanyFullData";
 import { THEMES } from "./constants";
 
 const Dashboard = () => {
-  const { currentNode, currentTheme, onChange, onRelease } =
-    useWindowControls();
+  const {
+    currentNode,
+    onChange,
+    onRelease,
+    currentTheme,
+    setCurrentTheme,
+    autoArrange,
+    addToTopRight,
+  } = useWindowControls();
 
   const { companies, stocks, isLoading, isError } = useLoadCompanyFullData();
 
@@ -39,7 +46,12 @@ const Dashboard = () => {
   return (
     <React.StrictMode>
       <div className="h-screen w-full overflow-hidden">
-        <Navbar />
+        <Navbar
+          currentTheme={currentTheme}
+          setCurrentTheme={setCurrentTheme}
+          autoArrange={autoArrange}
+          addToTopRight={addToTopRight}
+        />
         {isError && (
           <p className="pt-2 text-xl text-red-500 text-center">
             Error loading data. Please try again.
