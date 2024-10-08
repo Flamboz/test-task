@@ -3,8 +3,8 @@ import {
   DEFAULT_CONTROLS_WITH_CREATION,
   MosaicBranch,
   MosaicWindow,
-} from "./lib";
-import { CompanyType, StockType } from "./types";
+} from "../lib";
+import { CompanyType, StockType } from "../types";
 interface CompanyWidgetProps {
   path: MosaicBranch[];
   totalWindowCount: number;

@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Corner, createBalancedTreeFromLeaves, getLeaves, getNodeAtPath, getOtherDirection, getPathToCorner, MosaicDirection, MosaicNode, MosaicParent, updateTree } from "./lib";
-import { Theme } from "./types";
+import { Corner, createBalancedTreeFromLeaves, getLeaves, getNodeAtPath, getOtherDirection, getPathToCorner, MosaicDirection, MosaicNode, MosaicParent, updateTree } from "../lib";
 import { dropRight } from "lodash";
+import { Theme } from "../types";
 
 export const useWindowControls = () => {
   const [currentNode, setCurrentNode] = useState<MosaicNode<number> | null>({

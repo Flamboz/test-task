@@ -2,7 +2,7 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import "../styles/index.less";
 import "../styles/carbon.less";
-import Dashboard from "./Dashboard";
+import Dashboard from "./components/Dashboard";
 
 const APP_ELEMENT = document.getElementById("app");
 

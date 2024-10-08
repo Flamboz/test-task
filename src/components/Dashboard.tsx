@@ -1,13 +1,13 @@
 import "@blueprintjs/core/lib/css/blueprint.css";
 import "@blueprintjs/icons/lib/css/blueprint-icons.css";
 import React from "react";
-import { Mosaic, MosaicZeroState } from "./lib";
-import CompanyWidget from "./CompanyWidget";
+import { Mosaic, MosaicZeroState } from "../lib";
 import { Loader } from "./Loader";
-import { useWindowControls } from "./useWindowsControls";
 import { Navbar } from "./Navbar";
-import { useLoadCompanyFullData } from "./useLoadCompanyFullData";
-import { THEMES } from "./constants";
+import { useLoadCompanyFullData } from "../hooks/useLoadCompanyFullData";
+import { THEMES } from "../constants";
+import { useWindowControls } from "../hooks/useWindowsControls";
+import CompanyWidget from "./CompanyWidget";
 
 const Dashboard = () => {
   const {

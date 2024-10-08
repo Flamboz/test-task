@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CompanyType, StockType } from "./types";
+import { CompanyType, StockType } from "../types";
 
 export const useLoadCompanyFullData = () => {
   const [companies, setCompanies] = useState<CompanyType[]>([]);

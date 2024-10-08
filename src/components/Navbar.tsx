@@ -1,7 +1,7 @@
 import { HTMLSelect } from "@blueprintjs/core";
 import React from "react";
-import { THEMES } from "./constants";
-import { Theme } from "./types";
+import { THEMES } from "../constants";
+import { Theme } from "../types";
 
 interface NavbarProps {
   currentTheme: Theme;
